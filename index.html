@@ -1,0 +1,70 @@
+<head></head>
+<body>
+  <div class="container-fluid">
+    Note summary: <input id="note_summary" data-bind="value:note.summary,valueUpdate:'afterkeydown'" placeholder="summary"/>
+    <div class="row">
+      <div class="span2">
+        Context
+        <ul class="contexts" data-bind="template:{name:'context_tmpl',foreach:contexts}"/>
+
+        <div>
+          <label class="filter" data-bind="css:{activated:filters.trashed}">
+            <i class="icon icon-trash" data-bind="css:{'icon-white':filters.trashed}"></i> Trashed
+            <input style="display:none;" type="checkbox" data-bind="checked:filters.trashed"/>
+          </label>
+          <label class="filter" data-bind="css:{activated:filters.completed}">
+            <i class="icon icon-ok" data-bind="css:{'icon-white':filters.completed}"></i> Completed
+            <input style="display:none;" type="checkbox" data-bind="checked:filters.completed"/>
+          </label>
+        </div>
+
+        <div>
+          <a class="btn btn-mini" data-bind="click:filters.clear">clear filters</a>
+        </div>
+      </div>
+      
+      <div class="span2">
+        Project
+        <ul class="projects" data-bind="template:{name:'project_tmpl',foreach:projects}"/>
+      </div>
+
+      <div class="span8">
+        <ul class="notes" data-bind="template:{name:'note_tmpl',foreach:notes}"/>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/html" id="note_tmpl">
+  <li class="entity note">
+    <span class="trigger" data-bind="click:complete,css:{completed:completed}">
+      <i class="icon icon-ok"></i>
+    </span>
+    <input class="attr summary" data-bind="value:summary"/>
+    <span data-bind="text:project_name"/>
+    <span data-bind="text:context_name"/>
+    <span data-bind="text:ctime"/>
+    <span data-bind="text:mtime"/>
+    <span class="trigger" data-bind="click:trash,css:{trashed:trashed}">
+      <i class="icon icon-trash"></i>
+    </span>
+  </li>
+  </script>
+  
+  <script type="text/html" id="project_tmpl">
+  <li class="entity project">
+    <label class="filter" data-bind="css:{activated:filtered}">
+      <i class="icon icon-ok" data-bind="css:{'icon-white':filtered}"></i> <span data-bind="text:name"/>
+      <input style="display:none;" type="checkbox" data-bind="checked:filtered"/>
+    </label>
+  </li>
+  </script>
+  
+  <script type="text/html" id="context_tmpl">
+  <li class="entity context">
+    <label class="filter" data-bind="css:{activated:filtered}">
+      <i class="icon ${icon}" data-bind="css:{'icon-white':filtered}"></i> <span data-bind="text:name"/>
+      <input style="display:none;" type="checkbox" data-bind="checked:filtered"/>
+    </label>
+  </li>
+  </script>
+</body>

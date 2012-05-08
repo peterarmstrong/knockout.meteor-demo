@@ -1,0 +1,47 @@
+
+//---------------------------------------------------------------- Disable bootstrap
+input, .uneditable-input {
+  width: auto;
+}
+
+//---------------------------------------------------------------- Style
+ul {
+  list-style: none;
+  margin-left: 0;
+}
+#note_summary {
+  width: 240px * 3;
+}
+.notes input {
+  width: 210px * 1.5;
+}
+.note input:not(:focus),
+.projects input:not(:focus),
+.contexts input:not(:focus) {
+  border-color: transparent;
+  box-shadow: none;
+}
+.projects input:not(type[checkbox]) {
+  width: 96px;
+}
+.contexts input {
+  width: 128px;
+}
+
+//---------------------------------------------------------------- Behavior
+.filter {
+  border-radius: 2px;
+  padding: 2px;
+  margin-bottom: 1px;
+}
+label.activated {
+  color: white;
+  background-color: #222;
+}
+.icon:hover {
+  position: relative;
+  left: -1px;
+  top: -1px;
+  box-shadow: 1px 1px 1px rgba(32,32,32,0.4);
+  border-radius: 2px;
+}

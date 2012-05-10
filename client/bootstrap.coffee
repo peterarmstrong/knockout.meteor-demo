@@ -20,7 +20,6 @@ entity_mapper = (collection, opts)->
 
 Meteor.startup ->
   tagging = (collection)-> ko.meteor.find(collection, {}, mapping:entity_mapper(collection, (->{filtered:ko.observable false})))
-
   independentModel =
     note:
       summary: ko.observable ""
@@ -33,15 +32,13 @@ Meteor.startup ->
     projects: tagging Projects
     contexts: tagging Contexts
 
-  ids = (name) ->
-    id_arr = (collection)-> collection.map((e)->e.filtered() and e._id())
-    _.compact id_arr independentModel[name]()
+  filtered_tags = (name)-> _.compact independentModel[name]().map((e)->e.filtered() and e._id())
   filterModel =
     filters:
       trashed  : ko.observable false
       completed: ko.observable false
-      projects : -> ids 'projects'
-      contexts : -> ids 'contexts'
+      projects : -> filtered_tags 'projects'
+      contexts : -> filtered_tags 'contexts'
       clear: ->
         filterModel.filters.trashed false
         filterModel.filters.completed false

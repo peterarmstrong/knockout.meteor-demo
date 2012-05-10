@@ -2,6 +2,7 @@ Notes    = new Meteor.Collection "note"
 Projects = new Meteor.Collection "project"
 Contexts = new Meteor.Collection "context"
 
+## Set up sample project and context
 Meteor.startup ->
   _.each [
       {name:"Ramen", icon:""}

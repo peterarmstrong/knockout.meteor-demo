@@ -1,6 +1,5 @@
 README
 ======
-My 1st GITLAB project.
+Deployed at <http://knockout-meteor-demo.meteor.com/>.
 
-A ToDo app with meteor and knockout.
-<http://knockout-meteor-demo.meteor.com/>
+MIT License. Feel free to use.

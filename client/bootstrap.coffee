@@ -68,6 +68,5 @@ Meteor.startup ->
   viewModel = _.extend independentModel, filterModel, noteListModel
   ko.applyBindings viewModel, document.getElementsByTagName("body")[0]
   
-  $("#note_summary").focus()
   $("body").on "change", ".entity .attr", (p)-> find_entity($(p.srcElement)).update()
   jwerty.key "enter", viewModel.note.created, "#note_summary"

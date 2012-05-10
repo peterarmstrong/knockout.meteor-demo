@@ -2,7 +2,7 @@ Notes    = new Meteor.Collection "note"
 Projects = new Meteor.Collection "project"
 Contexts = new Meteor.Collection "context"
 
-reference = (collection, regex, summary)->
+ref_id = (collection, regex, summary)->
   m = summary.match regex
   if m
     upsert = (query)->
@@ -26,17 +26,22 @@ Meteor.startup ->
       summary: ko.observable ""
       created: ->
         note = _.extend (ko.mapping.toJS independentModel.note), {completed:false, trashed:false, ctime:Date.now(), mtime:null}
-        note["project_id"] = reference Projects, "#([a-zA-Z0-9_\-]+)", note.summary
-        note["context_id"] = reference Contexts, "@([a-zA-Z0-9_\-]+)", note.summary
+        note["project_id"] = ref_id Projects, "#([a-zA-Z0-9_\-]+)", note.summary
+        note["context_id"] = ref_id Contexts, "@([a-zA-Z0-9_\-]+)", note.summary
         Notes.insert note
         independentModel.note.summary ""
     projects: tagging Projects
     contexts: tagging Contexts
 
+  ids = (name) ->
+    id_arr = (collection)-> collection.map((e)->e.filtered() and e._id())
+    _.compact id_arr independentModel[name]()
   filterModel =
     filters:
       trashed  : ko.observable false
       completed: ko.observable false
+      projects : -> ids 'projects'
+      contexts : -> ids 'contexts'
       clear: ->
         filterModel.filters.trashed false
         filterModel.filters.completed false
@@ -51,14 +56,11 @@ Meteor.startup ->
           trash:(note)-> Notes.update {_id:note._id()}, _.extend ko.mapping.toJS(note), {trashed:true}
           project_name: ko.computed -> prop "projects", "project_id", "name"
           context_name: ko.computed -> prop "contexts", "context_id", "name"
-
-      to_id_array = (collection)-> collection.map((e)->e.filtered() and e._id())
-      ids = (name) -> _.compact to_id_array independentModel[name]()
       query =
         completed : filterModel.filters.completed()
         trashed   : filterModel.filters.trashed()
-        project_id: $in:ids 'projects'
-        context_id: $in:ids 'contexts'
+        project_id: $in:filterModel.filters.projects()
+        context_id: $in:filterModel.filters.contexts()
       delete query.context_id if query.context_id.$in.length is 0
       delete query.project_id if query.project_id.$in.length is 0
       ko.meteor.find(Notes, query, mapping:entity_mapper Notes, note_acts)()

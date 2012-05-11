@@ -2,13 +2,9 @@ Notes    = new Meteor.Collection "note"
 Projects = new Meteor.Collection "project"
 Contexts = new Meteor.Collection "context"
 
-ref_id = (collection, regex, summary)->
-  m = summary.match regex
-  if m
-    upsert = (query)->
-      id = collection.findOne(query)?._id
-      if id then id else collection.insert(query)
-    upsert name:m[1]
+upsert = (collection, query)->
+  id = collection.findOne(query)?._id
+  if id then id else collection.insert(query)
 
 entity_mapper = (collection, opts)->
   _mapper =
@@ -25,6 +21,7 @@ Meteor.startup ->
     note:
       summary: ko.observable ""
       created: ->
+        ref_id = (collection, regex, summary)-> if m = summary.match regex then upsert collection, name:m[1]
         note = _.extend (ko.mapping.toJS independentModel.note), {completed:false, trashed:false}
         note["project_id"] = ref_id Projects, "#([a-zA-Z0-9_\-]+)", note.summary
         note["context_id"] = ref_id Contexts, "@([a-zA-Z0-9_\-]+)", note.summary

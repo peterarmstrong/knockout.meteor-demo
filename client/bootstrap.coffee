@@ -9,8 +9,7 @@ upsert = (collection, query)->
 entity_mapper = (collection, opts)->
   _mapper =
     create:(e)->
-      data = _.extend {ctime:Date.now(), mtime:null}, e.data
-      _.extend ko.mapping.fromJS(data), opts?(e),
+      _.extend ko.mapping.fromJS(e.data), opts?(e),
         update: ->
           this.mtime Date.now()
           collection.update {_id:this._id()}, ko.mapping.toJS this
@@ -22,7 +21,7 @@ Meteor.startup ->
       summary: ko.observable ""
       created: ->
         ref_id = (collection, regex, summary)-> if m = summary.match regex then upsert collection, name:m[1]
-        note = _.extend (ko.mapping.toJS independentModel.note), {completed:false, trashed:false}
+        note = _.extend (ko.mapping.toJS independentModel.note), {completed:false, trashed:false, ctime:Date.now(), mtime:null}
         note["project_id"] = ref_id Projects, "#([a-zA-Z0-9_\-]+)", note.summary
         note["context_id"] = ref_id Contexts, "@([a-zA-Z0-9_\-]+)", note.summary
         Notes.insert note

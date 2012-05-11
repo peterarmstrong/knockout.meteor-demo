@@ -15,7 +15,7 @@ entity_mapper = (collection, opts)->
           collection.update {_id:this._id()}, ko.mapping.toJS this
 
 Meteor.startup ->
-  tagging = (collection)-> ko.meteor.find(collection, {}, mapping:entity_mapper(collection, (->{filtered:ko.observable false})))
+  all = (collection)-> ko.meteor.find collection, {}, mapping:entity_mapper(collection, -> filtered:ko.observable false)
   independentModel =
     note:
       summary: ko.observable ""
@@ -26,8 +26,8 @@ Meteor.startup ->
         note["context_id"] = ref_id Contexts, "@([a-zA-Z0-9_\-]+)", note.summary
         Notes.insert note
         independentModel.note.summary ""
-    projects: tagging Projects
-    contexts: tagging Contexts
+    projects: all Projects
+    contexts: all Contexts
 
   filtered_tags = (name)-> _.compact independentModel[name]().map((e)->e.filtered() and e._id())
   filterModel =

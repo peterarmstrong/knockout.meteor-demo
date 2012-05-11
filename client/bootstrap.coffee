@@ -13,9 +13,10 @@ ref_id = (collection, regex, summary)->
 entity_mapper = (collection, opts)->
   _mapper =
     create:(e)->
-      _.extend ko.mapping.fromJS(e.data), opts?(e),
+      data = _.extend {ctime:Date.now(), mtime:null}, e.data
+      _.extend ko.mapping.fromJS(data), opts?(e),
         update: ->
-          this.mtime? Date.now()
+          this.mtime Date.now()
           collection.update {_id:this._id()}, ko.mapping.toJS this
 
 Meteor.startup ->
@@ -24,7 +25,7 @@ Meteor.startup ->
     note:
       summary: ko.observable ""
       created: ->
-        note = _.extend (ko.mapping.toJS independentModel.note), {completed:false, trashed:false, ctime:Date.now(), mtime:null}
+        note = _.extend (ko.mapping.toJS independentModel.note), {completed:false, trashed:false}
         note["project_id"] = ref_id Projects, "#([a-zA-Z0-9_\-]+)", note.summary
         note["context_id"] = ref_id Contexts, "@([a-zA-Z0-9_\-]+)", note.summary
         Notes.insert note
